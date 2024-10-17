@@ -1,0 +1,31 @@
+[
+    {
+      "src": "/videos/1 AnimePahe_Enen_no_Shouboutai_-_Ni_no_Shou_Eng_Dub_-_01_720p_-KS-.mp4",
+      "thumbnail": "/thumbnails/Fireforce.jpg",
+      "description": "Fire force season 2 episode 1",
+      "categories": ["anime", "action"],
+      "album": "Fire Force"
+    },
+    {
+      "src": "/videos/2 AnimePahe_Enen_no_Shouboutai_-_Ni_no_Shou_Eng_Dub_-_02_720p_-KS-.mp4",
+      "thumbnail": "/thumbnails/Fireforce.jpg",
+      "description": "Fire force season 2 episode 2",
+      "categories": ["anime", "action"],
+      "album": "Fire Force"
+    },
+    {
+      "src": "/videos/Isle.of.Dogs.2018.1080p.mkv",
+      "thumbnail": "/thumbnails/Isleofdogs.jpg",
+      "description": "Isle of the dogs",
+      "categories": ["movie", "action"],
+      "album": "Isle of Dogs"
+    },
+    {
+      "src": "/videos/Adventure Time S01E25 Finn Meets His Hero.mp4",
+      "thumbnail": "/thumbnails/adventure-time-pictures.jpg",
+      "description": "Adventure time",
+      "categories": ["cartoon"],
+      "album": "Adventure Time"
+    }
+  ]
+  
