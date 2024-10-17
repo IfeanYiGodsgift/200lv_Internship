@@ -1,0 +1,222 @@
+/* Basic body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('background.jpg');
+    /* Image is in the same folder as the CSS file */
+    background-size: cover;
+    /* Ensures the image covers the entire page */
+    background-position: center;
+    /* Centers the image */
+    background-repeat: no-repeat;
+    /* Prevents the image from repeating */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+}
+
+/* CSS class for outlined text */
+.outlined-text {
+    font-size: 36px;
+    /* Adjust size for h1 */
+    color: #70e1d6;
+    /* Text color */
+    text-shadow:
+        0.5px 0.5px 0 #000,
+        /* Right bottom shadow */
+        -0.5px -0.5px 0 #000,
+        /* Left top shadow */
+        0.5px -0.5px 0 #000,
+        /* Right top shadow */
+        -0.5px 0.5px 0 #000;
+    /* Left bottom shadow */
+    -webkit-text-stroke: 2px #000;
+    /* Outline thickness and color */
+    font-weight: bold;
+    /* Optional: Make text bold */
+}
+
+
+/* Heading styling */
+h1 {
+    color: #70e1d6;
+    margin-bottom: 10px;
+    font-size: 48px;
+    font-weight: bold;
+}
+
+h2 {
+    color: #70e1d6;
+    margin-bottom: 25px;
+}
+
+/* Styling for control section */
+.controls {
+    margin-bottom: 20px;
+}
+
+.controls span {
+    color: #000000;
+    /* Change this to your desired color for both Moves and Time */
+}
+
+#move-counter {
+    color: #f0e9e9;
+    /* Specific color for the move counter */
+}
+
+#timer {
+    color: #f0e9e9;
+    /* Specific color for the timer */
+}
+
+/* Grid layout for game board */
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-gap: 10px;
+}
+
+/* Card styling */
+.card {
+    width: 100px;
+    height: 100px;
+    background-color: #c44b43;
+    /* Background color when card is not flipped */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+    position: relative;
+    background-size: cover;
+    /* Ensure images cover the card */
+    background-position: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    /* Center the image */
+}
+
+/* Styling for flipped cards */
+.card.flipped {
+    background-color: #fff;
+    transform: rotateY(180deg);
+    /*color: #333;*/
+}
+
+
+/* Styles for the front and back of the card */
+.card .front,
+.card .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    /* Prevents the back side from showing when not flipped */
+    border-radius: 8px;
+}
+
+/* Initially, show the back side */
+.card .back {
+    transform: rotateY(180deg);
+    background-color: #4c63af;
+}
+
+.card .front {
+    background-size: cover;
+    background-position: center;
+    /* Ensure the image covers the card */
+}
+
+
+/* Styling for matched cards */
+.card.matched {
+    background-color: #ddd;
+    color: #810e0e;
+    cursor: default;
+}
+
+/* Styling for result notification box */
+#result-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url('notification.jpg');
+    /* Set your custom background image */
+    background-size: cover;
+    /* Ensure the image covers the entire notification box */
+    background-position: center;
+    /* Center the image */
+    border: 2px solid #333;
+    /* Optional: Customize the border color if needed */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    /* Ensures the notification is on top */
+    text-align: center;
+    color: #fff;
+    cursor: move;
+}
+
+/* Hidden class to hide the notification initially */
+.hidden {
+    display: none;
+}
+
+/* Button styling */
+#result-notification button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Restart button styling */
+#restart-button {
+    background-color: #15675b;
+    /* Set the button background color to your HEX value */
+    color: #fff;
+    /* Set the text color to white for better contrast */
+    border: none;
+    /* Remove any default border */
+    padding: 10px 20px;
+    /* Adjust padding for better appearance */
+    font-size: 14px;
+    /* Set font size */
+    cursor: pointer;
+    /* Change cursor to pointer on hover */
+    border-radius: 5px;
+    /* Optional: Add border radius for rounded corners */
+    transition: background-color 0.3s ease;
+    /* Optional: Add transition effect */
+}
+
+/* Optional: Add hover effect for the button */
+#restart-button:hover {
+    background-color: #134c43;
+    /* Darker shade of your color for hover effect */
+}
+
+/* Styling for text with image background */
+.image-text {
+    font-size: 48px;
+    font-weight: bold;
+    color: transparent;
+    /* Make the text itself transparent */
+    background-image: url('notification.jpg');
+    /* Image to use as background */
+    background-size: cover;
+    /* Ensure the image covers the text */
+    -webkit-background-clip: text;
+    /* Clip the background to the text (WebKit-based browsers) */
+    background-clip: text;
+    /* Clip the background to the text */
+    text-align: center;
+}

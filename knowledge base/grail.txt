@@ -1,0 +1,164 @@
+// SaveFile handles saving a file specified by the note ID
+func SaveFile(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var body struct {
+		FileName string `json:"file_name"` // Changed from filename to file_name
+		FilePath string `json:"file_path"` // New field for file location
+	}
+
+	// Parse the request body
+	if err := c.BodyParser(&body); err != nil {
+		statusCode := fiber.StatusBadRequest
+		fmt.Printf("Status %d: Error - Invalid request body: %s\n", statusCode, err) // Log the error with status code
+		return c.Status(statusCode).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	// Validation
+	if body.FileName == "" {
+		statusCode := fiber.StatusBadRequest
+		fmt.Printf("Status %d: Error - File name is required\n", statusCode) // Log the error with status code
+		return c.Status(statusCode).JSON(fiber.Map{
+			"error": "File name is required",
+		})
+	}
+	if body.FilePath == "" {
+		statusCode := fiber.StatusBadRequest
+		fmt.Printf("Status %d: Error - File location is required\n", statusCode) // Log the error with status code
+		return c.Status(statusCode).JSON(fiber.Map{
+			"error": "File location is required",
+		})
+	}
+
+	// Convert id string to MongoDB ObjectId
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		statusCode := fiber.StatusBadRequest
+		fmt.Printf("Status %d: Error - Invalid ID format: %s\n", statusCode, err) // Log the error with status code
+		return c.Status(statusCode).JSON(fiber.Map{
+			"error": "Invalid ID format",
+		})
+	}
+
+	var note models.Note
+	err = collection.FindOne(context.Background(), bson.M{"_id": objID}).Decode(&note)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			statusCode := fiber.StatusNotFound
+			fmt.Printf("Status %d: Error - Note not found: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Note not found",
+			})
+		}
+		statusCode := fiber.StatusInternalServerError
+		fmt.Printf("Status %d: Error - Failed to retrieve note: %s\n", statusCode, err) // Log the error with status code
+		return c.Status(statusCode).JSON(fiber.Map{
+			"error": "Failed to retrieve note",
+		})
+	}
+
+	filePath := body.FilePath
+	fileName := body.FileName
+	fileExt := filepath.Ext(fileName)
+	fullPath := filepath.Join(filePath, fileName)
+
+	// Ensure the directory exists
+	if err := os.MkdirAll(filepath.Dir(fullPath), os.ModePerm); err != nil {
+		statusCode := fiber.StatusInternalServerError
+		fmt.Printf("Status %d: Error - Failed to create directory: %s\n", statusCode, err) // Log the error with status code
+		return c.Status(statusCode).JSON(fiber.Map{
+			"error": "Failed to create directory",
+		})
+	}
+
+	switch fileExt {
+	case ".docx":
+		// Create .docx file
+		doc := document.New()
+		para := doc.AddParagraph()
+		para.AddRun().AddText(note.Content)
+		file, err := os.Create(fullPath)
+		if err != nil {
+			statusCode := fiber.StatusInternalServerError
+			fmt.Printf("Status %d: Error - Failed to create .docx file: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Failed to create .docx file",
+			})
+		}
+		defer file.Close()
+		if err := doc.Save(file); err != nil {
+			statusCode := fiber.StatusInternalServerError
+			fmt.Printf("Status %d: Error - Failed to save .docx file: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Failed to save .docx file",
+			})
+		}
+	case ".pdf":
+		// Create .pdf file
+		pdf := gofpdf.New("P", "mm", "A4", "")
+		pdf.AddPage()
+		pdf.SetFont("Arial", "", 12)
+		pdf.MultiCell(0, 10, note.Content, "", "L", false)
+		file, err := os.Create(fullPath)
+		if err != nil {
+			statusCode := fiber.StatusInternalServerError
+			fmt.Printf("Status %d: Error - Failed to create .pdf file: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Failed to create .pdf file",
+			})
+		}
+		defer file.Close()
+		if err := pdf.Output(file); err != nil {
+			statusCode := fiber.StatusInternalServerError
+			fmt.Printf("Status %d: Error - Failed to save .pdf file: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Failed to save .pdf file",
+			})
+		}
+	case ".txt":
+		// Create .txt file
+		file, err := os.Create(fullPath)
+		if err != nil {
+			statusCode := fiber.StatusInternalServerError
+			fmt.Printf("Status %d: Error - Failed to create .txt file: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Failed to create .txt file",
+			})
+		}
+		defer file.Close()
+		if _, err := file.WriteString(note.Content); err != nil {
+			statusCode := fiber.StatusInternalServerError
+			fmt.Printf("Status %d: Error - Failed to write to .txt file: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Failed to write to .txt file",
+			})
+		}
+	default:
+		// For unknown file types, save them as is
+		file, err := os.Create(fullPath)
+		if err != nil {
+			statusCode := fiber.StatusInternalServerError
+			fmt.Printf("Status %d: Error - Failed to create file: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Failed to create file",
+			})
+		}
+		defer file.Close()
+		if _, err := file.WriteString(note.Content); err != nil {
+			statusCode := fiber.StatusInternalServerError
+			fmt.Printf("Status %d: Error - Failed to write to file: %s\n", statusCode, err) // Log the error with status code
+			return c.Status(statusCode).JSON(fiber.Map{
+				"error": "Failed to write to file",
+			})
+		}
+	}
+
+	// Success message with the actual file name
+	statusCode := fiber.StatusOK
+	fmt.Printf("Status %d: %s has been saved to %s successfully\n", statusCode, fileName, fullPath)
+
+	return c.Status(statusCode).JSON(fiber.Map{
+		"message": fmt.Sprintf("%s has been saved to %s successfully", fileName, fullPath),
+	})
+}

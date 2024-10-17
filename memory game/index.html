@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Matching Game</title>
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!--<h1 class="image-text">Oxenfree</h1>-->
+    <h1 class="outlined-text">Oxenfree</h1>
+    <h2>Memory Matching Game</h2>
+    <div class="controls">
+        <!-- Display move count -->
+        <span>Moves: <span id="move-counter">0</span></span>
+        <!-- Display timer -->
+        <span>Time: <span id="timer">0</span> seconds</span>
+        <!-- Restart button -->
+        <button id="restart-button">Restart</button>
+    </div>
+    <!-- Container for the card grid -->
+    <div id="game-board"></div>
+
+    <!-- Custom result notification -->
+    <div id="result-notification" class="hidden">
+        <p id="result-message"></p>
+        <button id="close-notification">Close</button>
+    </div>
+
+    <!-- Link to external JavaScript file -->
+    <script src="script.js"></script>
+</body>
+
+</html>
